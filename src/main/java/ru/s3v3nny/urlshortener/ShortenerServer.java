@@ -14,16 +14,19 @@ public class ShortenerServer {
         server = new Server();
 
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(80);
+        connector.setPort(8080);
         server.setConnectors(new Connector[] {connector});
 
         ServletHandler servletHandler = new ServletHandler();
 
         servletHandler.addServletWithMapping(ShortNew.class, "/short-new");
 
-
         server.setHandler(servletHandler);
 
+        server.start();
+    }
 
+    void stop() throws Exception {
+        server.stop();
     }
 }

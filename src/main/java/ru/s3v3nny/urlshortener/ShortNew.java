@@ -1,6 +1,5 @@
 package ru.s3v3nny.urlshortener;
 
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,30 +14,31 @@ import java.util.UUID;
 
 @WebServlet("short-new")
 public class ShortNew extends HttpServlet {
-    HashMap<String, String> urlMap;
-    JsonConverter CONVERTER = new JsonConverter();
-    String shortID;
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    JsonConverter converter = new JsonConverter();
+
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String contentType = request.getContentType();
         BufferedReader reader = request.getReader();
+        String shortID = null;
 
         if ("application/json".equals(contentType)) {
-            String link = CONVERTER.getLink(reader.readLine()).getLink();
+            String link = converter.getLink(reader.readLine()).getLink();
             if (isValidUrl(link) || link != null) {
-                shortID = createNewShortUrl(link, urlMap);
+                shortID = createNewShortUrl(link);
             } else {
-                System.out.print("Incorrect link!");
+                response.getWriter().print("Incorrect link!");
+                return;
             }
         } else {
-            System.out.print("Incorrect Content-Type!");
+            response.getWriter().print("Incorrect Content-Type!");
         }
-
-
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("\"link\": \"" + shortID + "\"}");
+        response.getWriter().print("\"link\": \"" + shortID + "\"}");
     }
 
     private boolean isValidUrl(String url) {
@@ -50,9 +50,9 @@ public class ShortNew extends HttpServlet {
         }
     }
 
-    private String createNewShortUrl(String link, HashMap<String, String> map) {
-        String id = UUID.randomUUID().toString().split("-")[0];
-        map.put(id, link);
-        return id;
+    private String createNewShortUrl(String link) {
+        String key = UUID.randomUUID().toString().split("-")[0];
+        Singleton.getInstance().addNewValue(key, link);
+        return key;
     }
 }

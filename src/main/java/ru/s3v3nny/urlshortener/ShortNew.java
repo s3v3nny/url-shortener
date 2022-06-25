@@ -28,6 +28,7 @@ public class ShortNew extends HttpServlet {
             String link = converter.getLink(reader.readLine()).getLink();
             if (isValidUrl(link) || link != null) {
                 shortID = createNewShortUrl(link);
+                System.out.println(link + " " + shortID);
             } else {
                 response.getWriter().print("Incorrect link!");
                 return;

@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.UUID;
 
 @WebServlet("short-new")
@@ -35,16 +34,18 @@ public class ShortNew extends HttpServlet {
             }
         } else {
             response.getWriter().print("Incorrect Content-Type!");
+            return;
         }
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().print("\"link\": \"" + shortID + "\"}");
+        response.getWriter().print("{\"link\": \"" + shortID + "\"}");
     }
 
-    private boolean isValidUrl(String url) {
+    private boolean isValidUrl(String link) {
         try {
-            new URL(url).toURI();
+            URL url = new URL(link);
+            url.toURI();
             return true;
         } catch (Exception e) {
             return false;

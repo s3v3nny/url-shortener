@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Singleton {
     private static Singleton instance = new Singleton();
 
-    private Singleton () {
+    private Singleton() {
     }
 
     public static Singleton getInstance() {
@@ -22,14 +22,18 @@ public class Singleton {
     }
 
     public String getValue(String key) {
-        if(map == null) {
+        if (map == null) {
             return null;
         } else {
             return map.get(key);
         }
     }
 
-    public void deleteValue (String key) {
+    public void deleteValue(String key) {
         map.remove(key);
+    }
+
+    public HashMap<String, String> getMap() {
+        return map;
     }
 }

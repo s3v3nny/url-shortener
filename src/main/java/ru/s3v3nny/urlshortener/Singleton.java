@@ -36,4 +36,8 @@ public class Singleton {
     public HashMap<String, String> getMap() {
         return map;
     }
+
+    public boolean containsValue (String key) {
+        return map.containsKey(key);
+    }
 }

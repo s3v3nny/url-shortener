@@ -20,8 +20,8 @@ public class ShortenerServer {
         ServletHandler servletHandler = new ServletHandler();
 
         servletHandler.addServletWithMapping(ShortNew.class, "/short-new");
-        servletHandler.addServletWithMapping(Redirect.class, "/go");
-        servletHandler.addServletWithMapping(GetAllIDs.class, "/admin/all");
+        servletHandler.addServletWithMapping(Redirect.class, "/go/*");
+        servletHandler.addServletWithMapping(ManageIDs.class, "/admin/*");
 
         server.setHandler(servletHandler);
 

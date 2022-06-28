@@ -1,21 +1,21 @@
-package ru.s3v3nny.urlshortener;
+package ru.s3v3nny.urlshortener.services;
 
 import java.util.HashMap;
 
-public class Singleton {
-    private static Singleton instance = new Singleton();
+public class MapUtils {
+    private static MapUtils instance = new MapUtils();
 
-    private Singleton() {
+    private MapUtils() {
     }
 
-    public static Singleton getInstance() {
+    public static MapUtils getInstance() {
         if (instance == null) {
-            instance = new Singleton();
+            instance = new MapUtils();
         }
         return instance;
     }
 
-    private static HashMap<String, String> map = new HashMap<>();
+    protected HashMap<String, String> map = new HashMap<>();
 
     public void addNewValue(String key, String value) {
         map.put(key, value);

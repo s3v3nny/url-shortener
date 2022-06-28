@@ -1,34 +1,41 @@
-package ru.s3v3nny.urlshortener;
+package ru.s3v3nny.urlshortener.servlets;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.s3v3nny.urlshortener.models.Error;
+import ru.s3v3nny.urlshortener.services.JsonConverter;
+import ru.s3v3nny.urlshortener.services.MapUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
 @WebServlet("go")
-public class Redirect extends HttpServlet {
+public class GoServlet extends HttpServlet {
+
     protected void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Error err = new Error();
         String link = null;
         String key = request.getPathInfo();
+        JsonConverter converter = new JsonConverter();
 
         if(key == null){
-            response.getWriter().println("No key?");
+            err.setMessage("Incorrect key");
+            response.getWriter().println(converter.errorToJson(err));
             return;
         } else {
             key = key.substring(1);
         }
 
-        if(Singleton.getInstance().containsValue(key)) {
-            link = Singleton.getInstance().getValue(key);
+        if(MapUtils.getInstance().containsValue(key)) {
+            link = MapUtils.getInstance().getValue(key);
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", link);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().println("No link?");
+            err.setMessage("Link doesn't exist in Map");
+            response.getWriter().println(converter.errorToJson(err));
         }
     }
 }

@@ -17,7 +17,7 @@ public class LinkUtils {
 
     public String createNewShortUrl(String link) {
         String key = UUID.randomUUID().toString().split("-")[0];
-        MapUtils.getInstance().addNewValue(key, link);
+        LinkRepository.getInstance().addNewValue(key, link);
         return key;
     }
 }

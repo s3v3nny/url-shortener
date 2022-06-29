@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
-import ru.s3v3nny.urlshortener.services.MapUtils;
+import ru.s3v3nny.urlshortener.services.LinkRepository;
 
 import java.io.IOException;
 
@@ -28,8 +28,8 @@ public class GoServlet extends HttpServlet {
             key = key.substring(1);
         }
 
-        if(MapUtils.getInstance().containsValue(key)) {
-            link = MapUtils.getInstance().getValue(key);
+        if(LinkRepository.getInstance().containsValue(key)) {
+            link = LinkRepository.getInstance().getValue(key);
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", link);
         } else {

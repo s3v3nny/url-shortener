@@ -2,15 +2,15 @@ package ru.s3v3nny.urlshortener.services;
 
 import java.util.HashMap;
 
-public class MapUtils {
-    private static MapUtils instance = new MapUtils();
+public class LinkRepository {
+    private static LinkRepository instance = new LinkRepository();
 
-    private MapUtils() {
+    private LinkRepository() {
     }
 
-    public static MapUtils getInstance() {
+    public static LinkRepository getInstance() {
         if (instance == null) {
-            instance = new MapUtils();
+            instance = new LinkRepository();
         }
         return instance;
     }

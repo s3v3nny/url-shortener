@@ -1,7 +1,7 @@
 package ru.s3v3nny.urlshortener.services;
 
 import ru.s3v3nny.urlshortener.models.Error;
-import ru.s3v3nny.urlshortener.models.JettyServerInfo;
+import ru.s3v3nny.urlshortener.configs.JettyServerInfo;
 import ru.s3v3nny.urlshortener.models.Link;
 
 import com.google.gson.Gson;

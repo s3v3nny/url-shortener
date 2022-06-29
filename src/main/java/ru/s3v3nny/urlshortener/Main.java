@@ -10,9 +10,9 @@ import java.nio.file.Paths;
 
 public class Main {
 
-    private static JsonConverter converter = new JsonConverter();
+    private static final JsonConverter converter = new JsonConverter();
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         ClassLoader classLoader = Main.class.getClassLoader();
         URL jscURL = classLoader.getResource("JettyServerConfig.json");
@@ -32,6 +32,5 @@ public class Main {
 
         ShortenerServer server = new ShortenerServer();
         server.start(port);
-        System.in.read();
     }
 }

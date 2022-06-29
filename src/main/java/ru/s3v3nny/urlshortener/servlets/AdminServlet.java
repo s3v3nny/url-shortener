@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
-import ru.s3v3nny.urlshortener.services.MapUtils;
+import ru.s3v3nny.urlshortener.services.LinkRepository;
 
 import java.io.IOException;
 import java.util.Map;
@@ -32,8 +32,8 @@ public class AdminServlet extends HttpServlet {
         }
 
 
-        if(MapUtils.getInstance().containsValue(key)){
-            MapUtils.getInstance().deleteValue(key);
+        if(LinkRepository.getInstance().containsValue(key)){
+            LinkRepository.getInstance().deleteValue(key);
             response.setStatus(HttpServletResponse.SC_OK);
             log.info(key + " is deleted");
         } else {
@@ -48,13 +48,13 @@ public class AdminServlet extends HttpServlet {
 
         if(!"/all".equals(key)) return;
 
-        if(MapUtils.getInstance().getMap() == null) {
+        if(LinkRepository.getInstance().getMap() == null) {
             err.setMessage("HashMap is null");
             response.getWriter().print(converter.errorToJson(err));
             return;
         }
 
-        for(Map.Entry<String, String> entry : MapUtils.getInstance().getMap().entrySet()) {
+        for(Map.Entry<String, String> entry : LinkRepository.getInstance().getMap().entrySet()) {
             response.getWriter().println(entry.getKey() + " " + entry.getValue());
         }
     }

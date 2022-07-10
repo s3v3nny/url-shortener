@@ -19,17 +19,17 @@ public class ShortNewServlet extends HttpServlet {
 
     JsonConverter converter = new JsonConverter();
     Logger log = Logger.getLogger(ShortNewServlet.class.getName());
+    Error err;
 
-
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String contentType = request.getContentType();
         BufferedReader reader = request.getReader();
+
         String shortID = null;
         LinkUtils utils = new LinkUtils();
         String logString = null;
-        Link linkObj = new Link();
-        Error err = new Error();
 
         if ("application/json".equals(contentType)) {
             String link = converter.getLink(reader.readLine()).getLink();
@@ -43,10 +43,13 @@ public class ShortNewServlet extends HttpServlet {
                 return;
             }
         } else {
+            err = new Error();
             err.setMessage("Incorrect Content-Type");
             response.getWriter().print(converter.errorToJson(err));
             return;
         }
+
+        Link linkObj = new Link();
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);

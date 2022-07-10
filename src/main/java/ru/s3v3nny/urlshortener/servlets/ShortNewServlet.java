@@ -20,6 +20,7 @@ public class ShortNewServlet extends HttpServlet {
     JsonConverter converter = new JsonConverter();
     Logger log = Logger.getLogger(ShortNewServlet.class.getName());
     Error err;
+    LinkUtils utils = new LinkUtils();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -27,13 +28,12 @@ public class ShortNewServlet extends HttpServlet {
         String contentType = request.getContentType();
         BufferedReader reader = request.getReader();
 
-        String shortID = null;
-        LinkUtils utils = new LinkUtils();
-        String logString = null;
+        String shortID;
+        String logString;
 
-        if ("application/json".equals(contentType)) {
+        if (utils.checkContentType(contentType)) {
             String link = converter.getLink(reader.readLine()).getLink();
-            if (utils.isValidUrl(link) || link != null) {
+            if (utils.checkURL(link)) {
                 shortID = utils.createNewShortUrl(link);
                 logString = link + ": " + shortID;
                 log.info(logString);

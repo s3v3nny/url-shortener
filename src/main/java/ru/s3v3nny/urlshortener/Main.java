@@ -11,22 +11,30 @@ import java.nio.file.Paths;
 public class Main {
 
     private static final JsonConverter converter = new JsonConverter();
+    private static final String APP_CONFIG_PATH = System.getenv("APP_CONFIG_PATH");
 
     public static void main(String[] args) throws Exception {
 
-        ClassLoader classLoader = Main.class.getClassLoader();
-        URL jscURL = classLoader.getResource("JettyServerConfig.json");
+        String jettyServerConfig;
+        System.out.println(APP_CONFIG_PATH);
 
-        File jscFile = null;
+        if(APP_CONFIG_PATH == null) {
+            ClassLoader classLoader = Main.class.getClassLoader();
+            URL jscURL = classLoader.getResource("JettyServerConfig.json");
 
-        try {
-            jscFile = new File(jscURL.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            System.exit(-1);
+            File jscFile = null;
+
+            try {
+                jscFile = new File(jscURL.toURI());
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+
+            jettyServerConfig = Files.readString(Paths.get(String.valueOf(jscFile.toPath())));
+        } else {
+            jettyServerConfig = Files.readString(Paths.get(APP_CONFIG_PATH));
         }
-
-        String jettyServerConfig = Files.readString(Paths.get(String.valueOf(jscFile.toPath())));
 
         int port = converter.getJettyServerInfo(jettyServerConfig).getPort();
 

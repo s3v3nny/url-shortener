@@ -18,7 +18,7 @@ public class ShortenerServer {
 
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
-        server.setConnectors(new Connector[] {connector});
+        server.setConnectors(new Connector[]{connector});
 
         ServletHandler servletHandler = new ServletHandler();
 

@@ -18,13 +18,14 @@ public class AdminServlet extends HttpServlet {
 
     JsonConverter converter = new JsonConverter();
     Error err;
+    Logger log = Logger.getLogger(AdminServlet.class.getName());
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String key = request.getPathInfo();
 
-        Logger log = Logger.getLogger(AdminServlet.class.getName());
-        if(key == null) {
+        if (key == null) {
             err = new Error();
             err.setMessage("Incorrect key");
             response.getWriter().println(converter.errorToJson(err));
@@ -34,7 +35,7 @@ public class AdminServlet extends HttpServlet {
         }
 
 
-        if(LinkRepository.getInstance().containsValue(key)){
+        if (LinkRepository.getInstance().containsValue(key)) {
             LinkRepository.getInstance().deleteValue(key);
             response.setStatus(HttpServletResponse.SC_OK);
             log.info(key + " is deleted");
@@ -50,16 +51,16 @@ public class AdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String key = request.getPathInfo();
 
-        if(!"/all".equals(key)) return;
+        if (!"/all".equals(key)) return;
 
-        if(LinkRepository.getInstance().getMap() == null) {
+        if (LinkRepository.getInstance().getMap() == null) {
             err = new Error();
             err.setMessage("HashMap is null");
             response.getWriter().print(converter.errorToJson(err));
             return;
         }
 
-        for(Map.Entry<String, String> entry : LinkRepository.getInstance().getMap().entrySet()) {
+        for (Map.Entry<String, String> entry : LinkRepository.getInstance().getMap().entrySet()) {
             response.getWriter().println(entry.getKey() + " " + entry.getValue());
         }
     }

@@ -15,15 +15,14 @@ import java.io.IOException;
 public class GoServlet extends HttpServlet {
 
     Error err;
+    JsonConverter converter = new JsonConverter();
 
     @Override
-    protected void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String link = null;
         String key = request.getPathInfo();
-        JsonConverter converter = new JsonConverter();
 
-        if(key == null || key.isEmpty()){
+        if (key == null || key.isEmpty()) {
             err = new Error();
             err.setMessage("Incorrect key");
             response.getWriter().println(converter.errorToJson(err));
@@ -32,7 +31,9 @@ public class GoServlet extends HttpServlet {
             key = key.substring(1);
         }
 
-        if(LinkRepository.getInstance().containsValue(key)) {
+        String link = null;
+
+        if (LinkRepository.getInstance().containsValue(key)) {
             link = LinkRepository.getInstance().getValue(key);
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", link);

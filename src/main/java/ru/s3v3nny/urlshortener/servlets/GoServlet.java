@@ -14,13 +14,17 @@ import java.io.IOException;
 @WebServlet("go")
 public class GoServlet extends HttpServlet {
 
+    Error err;
+
+    @Override
     protected void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Error err = new Error();
+
         String link = null;
         String key = request.getPathInfo();
         JsonConverter converter = new JsonConverter();
 
         if(key == null){
+            err = new Error();
             err.setMessage("Incorrect key");
             response.getWriter().println(converter.errorToJson(err));
             return;
@@ -33,6 +37,7 @@ public class GoServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", link);
         } else {
+            err = new Error();
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             err.setMessage("Link doesn't exist in Map");
             response.getWriter().println(converter.errorToJson(err));

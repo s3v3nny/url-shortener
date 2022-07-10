@@ -17,13 +17,15 @@ import java.util.logging.Logger;
 public class AdminServlet extends HttpServlet {
 
     JsonConverter converter = new JsonConverter();
-    Error err = new Error();
+    Error err;
 
+    @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String key = request.getPathInfo();
 
         Logger log = Logger.getLogger(AdminServlet.class.getName());
         if(key == null) {
+            err = new Error();
             err.setMessage("Incorrect key");
             response.getWriter().println(converter.errorToJson(err));
             return;
@@ -38,17 +40,20 @@ public class AdminServlet extends HttpServlet {
             log.info(key + " is deleted");
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            err = new Error();
             err.setMessage("Link doesn't exist in Map");
             response.getWriter().println(converter.errorToJson(err));
         }
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String key = request.getPathInfo();
 
         if(!"/all".equals(key)) return;
 
         if(LinkRepository.getInstance().getMap() == null) {
+            err = new Error();
             err.setMessage("HashMap is null");
             response.getWriter().print(converter.errorToJson(err));
             return;

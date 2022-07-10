@@ -23,7 +23,7 @@ public class GoServlet extends HttpServlet {
         String key = request.getPathInfo();
         JsonConverter converter = new JsonConverter();
 
-        if(key == null){
+        if(key == null || key.isEmpty()){
             err = new Error();
             err.setMessage("Incorrect key");
             response.getWriter().println(converter.errorToJson(err));

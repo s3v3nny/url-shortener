@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
-import ru.s3v3nny.urlshortener.services.LinkRepository;
 import ru.s3v3nny.urlshortener.services.LinkUtils;
 
 import java.io.IOException;

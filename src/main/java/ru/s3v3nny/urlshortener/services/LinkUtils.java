@@ -2,6 +2,7 @@ package ru.s3v3nny.urlshortener.services;
 
 import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
+import ru.s3v3nny.urlshortener.repositories.MapRepo;
 import ru.s3v3nny.urlshortener.servlets.AdminServlet;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class LinkUtils {
     Error err;
     JsonConverter converter = new JsonConverter();
     Logger log = Logger.getLogger(AdminServlet.class.getName());
+    LinkRepoInterface repoInterface = LinkRepoProvider.getLinkRepo();
 
     public boolean isValidUrl(String link) {
         try {
@@ -28,7 +30,7 @@ public class LinkUtils {
 
     public String createNewShortUrl(String link) {
         String key = UUID.randomUUID().toString().split("-")[0];
-        LinkRepository.getInstance().addNewValue(key, link);
+        repoInterface.addNewValue(key, link);
         return key;
     }
 
@@ -42,8 +44,8 @@ public class LinkUtils {
 
     public void getLink(HttpServletResponse response, String key) throws IOException {
         System.out.println(key);
-        if (LinkRepository.getInstance().containsValue(key)) {
-            String link = LinkRepository.getInstance().getValue(key);
+        if (repoInterface.containsValue(key)) {
+            String link = repoInterface.getValue(key);
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", link);
         } else {
@@ -55,8 +57,8 @@ public class LinkUtils {
     }
 
     public void deleteLink(HttpServletResponse response, String key) throws IOException {
-        if (LinkRepository.getInstance().containsValue(key)) {
-            LinkRepository.getInstance().deleteValue(key);
+        if (repoInterface.containsValue(key)) {
+            repoInterface.deleteValue(key);
             response.setStatus(HttpServletResponse.SC_OK);
             log.info(key + " is deleted");
         } else {
@@ -68,13 +70,13 @@ public class LinkUtils {
     }
 
     public void printLinks(HttpServletResponse response) throws IOException {
-        for (Map.Entry<String, String> entry : LinkRepository.getInstance().getMap().entrySet()) {
+        for (Map.Entry<String, String> entry : repoInterface.getMap().entrySet()) {
             response.getWriter().println(entry.getKey() + " " + entry.getValue());
         }
     }
 
     public boolean checkMap() {
-        return LinkRepository.getInstance().getMap() != null;
+        return repoInterface.getMap() != null;
     }
 
     public boolean checkContentType(String contentType) {

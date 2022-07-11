@@ -1,26 +1,19 @@
-package ru.s3v3nny.urlshortener.services;
+package ru.s3v3nny.urlshortener.repositories;
+
+import ru.s3v3nny.urlshortener.services.LinkRepoInterface;
 
 import java.util.HashMap;
 
-public class LinkRepository {
-    private static LinkRepository instance = new LinkRepository();
-
-    private LinkRepository() {
-    }
-
-    public static LinkRepository getInstance() {
-        if (instance == null) {
-            instance = new LinkRepository();
-        }
-        return instance;
-    }
+public class MapRepo implements LinkRepoInterface {
 
     protected HashMap<String, String> map = new HashMap<>();
 
+    @Override
     public void addNewValue(String key, String value) {
         map.put(key, value);
     }
 
+    @Override
     public String getValue(String key) {
         if (map == null) {
             return null;
@@ -29,15 +22,18 @@ public class LinkRepository {
         }
     }
 
+    @Override
     public void deleteValue(String key) {
         map.remove(key);
     }
 
+    @Override
     public HashMap<String, String> getMap() {
         return map;
     }
 
-    public boolean containsValue (String key) {
+    @Override
+    public boolean containsValue(String key) {
         return map.containsKey(key);
     }
 }

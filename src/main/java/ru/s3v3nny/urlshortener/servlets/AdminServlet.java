@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
+import ru.s3v3nny.urlshortener.services.LinkService;
 import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class AdminServlet extends HttpServlet {
     JsonConverter converter = new JsonConverter();
 
     LinkUtils utils = new LinkUtils();
+    LinkService service = new LinkService();
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,7 +35,7 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
-        utils.deleteLink(response, key);
+        service.deleteLink(response, key);
     }
 
     @Override
@@ -47,6 +49,6 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
-        utils.printLinks(response);
+        service.printLinks(response);
     }
 }

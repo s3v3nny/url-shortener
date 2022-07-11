@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.models.Link;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
+import ru.s3v3nny.urlshortener.services.LinkService;
 import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.BufferedReader;
@@ -18,8 +19,11 @@ import java.util.logging.Logger;
 public class ShortNewServlet extends HttpServlet {
 
     JsonConverter converter = new JsonConverter();
+
     Logger log = Logger.getLogger(ShortNewServlet.class.getName());
+
     LinkUtils utils = new LinkUtils();
+    LinkService service = new LinkService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,7 +37,7 @@ public class ShortNewServlet extends HttpServlet {
         if (utils.checkContentType(contentType)) {
             String link = converter.getLink(reader.readLine()).getLink();
             if (utils.checkURL(link)) {
-                shortID = utils.createNewShortUrl(link);
+                shortID = service.createNewShortUrl(link);
                 logString = link + ": " + shortID;
                 log.info(logString);
             } else {

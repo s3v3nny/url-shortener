@@ -1,12 +1,12 @@
 package ru.s3v3nny.urlshortener.repositories;
 
-import ru.s3v3nny.urlshortener.services.LinkRepoInterface;
+import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 
 import java.util.HashMap;
 
 public class MapRepo implements LinkRepoInterface {
 
-    protected HashMap<String, String> map = new HashMap<>();
+    private HashMap<String, String> map = new HashMap<>();
 
     @Override
     public void addNewValue(String key, String value) {

@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.models.Link;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
-import ru.s3v3nny.urlshortener.services.LinkUtils;
+import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,6 @@ public class ShortNewServlet extends HttpServlet {
 
     JsonConverter converter = new JsonConverter();
     Logger log = Logger.getLogger(ShortNewServlet.class.getName());
-    Error err;
     LinkUtils utils = new LinkUtils();
 
     @Override
@@ -38,12 +37,13 @@ public class ShortNewServlet extends HttpServlet {
                 logString = link + ": " + shortID;
                 log.info(logString);
             } else {
+                var err = new Error();
                 err.setMessage("Incorrect link");
                 response.getWriter().print(converter.errorToJson(err));
                 return;
             }
         } else {
-            err = new Error();
+            var err = new Error();
             err.setMessage("Incorrect Content-Type");
             response.getWriter().print(converter.errorToJson(err));
             return;

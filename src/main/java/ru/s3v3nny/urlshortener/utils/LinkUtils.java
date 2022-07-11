@@ -1,12 +1,14 @@
-package ru.s3v3nny.urlshortener.services;
+package ru.s3v3nny.urlshortener.utils;
 
 import jakarta.servlet.http.HttpServletResponse;
+import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 import ru.s3v3nny.urlshortener.models.Error;
-import ru.s3v3nny.urlshortener.repositories.MapRepo;
+import ru.s3v3nny.urlshortener.services.JsonConverter;
+import ru.s3v3nny.urlshortener.services.LinkRepoProvider;
+import ru.s3v3nny.urlshortener.services.URLCheck;
 import ru.s3v3nny.urlshortener.servlets.AdminServlet;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -16,21 +18,11 @@ public class LinkUtils {
     Error err;
     JsonConverter converter = new JsonConverter();
     Logger log = Logger.getLogger(AdminServlet.class.getName());
-    LinkRepoInterface repoInterface = LinkRepoProvider.getLinkRepo();
-
-    public boolean isValidUrl(String link) {
-        try {
-            URL url = new URL(link);
-            url.toURI();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    LinkRepoInterface linkRepo = LinkRepoProvider.getLinkRepo();
 
     public String createNewShortUrl(String link) {
         String key = UUID.randomUUID().toString().split("-")[0];
-        repoInterface.addNewValue(key, link);
+        linkRepo.addNewValue(key, link);
         return key;
     }
 
@@ -38,14 +30,14 @@ public class LinkUtils {
         return key != null && !key.isEmpty();
     }
 
-    public String getKey(String key) {
+    public String formatKey(String key) {
         return key.substring(1);
     }
 
     public void getLink(HttpServletResponse response, String key) throws IOException {
         System.out.println(key);
-        if (repoInterface.containsValue(key)) {
-            String link = repoInterface.getValue(key);
+        if (linkRepo.containsValue(key)) {
+            String link = linkRepo.getValue(key);
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", link);
         } else {
@@ -57,8 +49,8 @@ public class LinkUtils {
     }
 
     public void deleteLink(HttpServletResponse response, String key) throws IOException {
-        if (repoInterface.containsValue(key)) {
-            repoInterface.deleteValue(key);
+        if (linkRepo.containsValue(key)) {
+            linkRepo.deleteValue(key);
             response.setStatus(HttpServletResponse.SC_OK);
             log.info(key + " is deleted");
         } else {
@@ -70,13 +62,13 @@ public class LinkUtils {
     }
 
     public void printLinks(HttpServletResponse response) throws IOException {
-        for (Map.Entry<String, String> entry : repoInterface.getMap().entrySet()) {
+        for (Map.Entry<String, String> entry : linkRepo.getMap().entrySet()) {
             response.getWriter().println(entry.getKey() + " " + entry.getValue());
         }
     }
 
     public boolean checkMap() {
-        return repoInterface.getMap() != null;
+        return linkRepo.getMap() != null;
     }
 
     public boolean checkContentType(String contentType) {
@@ -84,6 +76,6 @@ public class LinkUtils {
     }
 
     public boolean checkURL(String url) {
-        return isValidUrl(url) && url != null;
+        return URLCheck.isValidUrl(url) && url != null;
     }
 }

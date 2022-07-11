@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
-import ru.s3v3nny.urlshortener.services.LinkUtils;
+import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.IOException;
 
@@ -24,9 +24,9 @@ public class GoServlet extends HttpServlet {
         String key = request.getPathInfo();
 
         if (utils.checkKey(key)) {
-            key = utils.getKey(key);
+            key = utils.formatKey(key);
         } else {
-            err = new Error();
+            var err = new Error();
             err.setMessage("Incorrect key");
             response.getWriter().println(converter.errorToJson(err));
             return;

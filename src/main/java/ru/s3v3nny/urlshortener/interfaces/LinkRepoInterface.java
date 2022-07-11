@@ -1,4 +1,4 @@
-package ru.s3v3nny.urlshortener.services;
+package ru.s3v3nny.urlshortener.interfaces;
 
 import java.util.HashMap;
 

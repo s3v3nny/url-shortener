@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
-import ru.s3v3nny.urlshortener.services.LinkUtils;
+import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.IOException;
 
@@ -15,7 +15,6 @@ import java.io.IOException;
 public class AdminServlet extends HttpServlet {
 
     JsonConverter converter = new JsonConverter();
-    Error err;
 
     LinkUtils utils = new LinkUtils();
 
@@ -26,9 +25,9 @@ public class AdminServlet extends HttpServlet {
         System.out.println(key);
 
         if (utils.checkKey(key)) {
-            key = utils.getKey(key);
+            key = utils.formatKey(key);
         } else {
-            err = new Error();
+            var err = new Error();
             err.setMessage("Incorrect key");
             response.getWriter().println(converter.errorToJson(err));
             return;
@@ -42,7 +41,7 @@ public class AdminServlet extends HttpServlet {
         String key = request.getPathInfo();
 
         if (!utils.checkMap()) {
-            err = new Error();
+            var err = new Error();
             err.setMessage("HashMap is null");
             response.getWriter().print(converter.errorToJson(err));
             return;

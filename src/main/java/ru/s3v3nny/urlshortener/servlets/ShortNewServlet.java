@@ -13,6 +13,7 @@ import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 @WebServlet("short-new")
@@ -31,13 +32,17 @@ public class ShortNewServlet extends HttpServlet {
         String contentType = request.getContentType();
         BufferedReader reader = request.getReader();
 
-        String shortID;
+        String shortID = null;
         String logString;
 
         if (utils.checkContentType(contentType)) {
             String link = converter.getLink(reader.readLine()).getLink();
             if (utils.checkURL(link)) {
-                shortID = service.createNewShortUrl(link);
+                try {
+                    shortID = service.createNewShortUrl(link);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 logString = link + ": " + shortID;
                 log.info(logString);
             } else {

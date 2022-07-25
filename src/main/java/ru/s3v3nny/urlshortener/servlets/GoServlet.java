@@ -11,6 +11,7 @@ import ru.s3v3nny.urlshortener.services.LinkService;
 import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("go")
 public class GoServlet extends HttpServlet {
@@ -34,6 +35,10 @@ public class GoServlet extends HttpServlet {
             return;
         }
 
-        service.getLink(response, key);
+        try {
+            service.getLink(response, key);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

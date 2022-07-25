@@ -11,6 +11,7 @@ import ru.s3v3nny.urlshortener.services.LinkService;
 import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
@@ -24,7 +25,6 @@ public class AdminServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String key = request.getPathInfo();
-        System.out.println(key);
 
         if (utils.checkKey(key)) {
             key = utils.formatKey(key);
@@ -35,7 +35,11 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
-        service.deleteLink(response, key);
+        try {
+            service.deleteLink(response, key);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -44,7 +48,7 @@ public class AdminServlet extends HttpServlet {
 
         if (!utils.checkMap()) {
             var err = new Error();
-            err.setMessage("HashMap is null");
+            err.setMessage("Repository is null");
             response.getWriter().print(converter.errorToJson(err));
             return;
         }

@@ -1,15 +1,18 @@
 package ru.s3v3nny.urlshortener.interfaces;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 public interface LinkRepoInterface {
-    void addNewValue(String key, String value);
+    void addNewValue(String key, String value) throws SQLException;
 
-    String getValue(String key);
+    String getValue(String key) throws SQLException;
 
-    void deleteValue(String key);
+    void deleteValue(String key) throws SQLException;
 
     HashMap<String, String> getMap();
 
-    boolean containsValue(String key);
+    boolean containsValue(String key) throws SQLException;
+
 }

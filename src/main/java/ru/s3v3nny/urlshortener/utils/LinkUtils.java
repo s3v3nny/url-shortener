@@ -15,10 +15,6 @@ public class LinkUtils {
         return key.substring(1);
     }
 
-    public boolean checkMap() {
-        return linkRepo.getMap() != null;
-    }
-
     public boolean checkContentType(String contentType) {
         return "application/json".equals(contentType);
     }

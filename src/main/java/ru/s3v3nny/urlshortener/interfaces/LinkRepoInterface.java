@@ -11,7 +11,7 @@ public interface LinkRepoInterface {
 
     void deleteValue(String key) throws SQLException;
 
-    HashMap<String, String> getMap();
+    String getValues() throws SQLException;
 
     boolean containsValue(String key) throws SQLException;
 

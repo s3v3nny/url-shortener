@@ -36,7 +36,16 @@ public class GoServlet extends HttpServlet {
         }
 
         try {
-            service.getLink(response, key);
+            String link = service.getLink(key);
+            if (link == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                var err = new Error();
+                err.setMessage("Link doesn't exist in repository");
+                response.getWriter().println(converter.errorToJson(err));
+            } else {
+                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                response.setHeader("Location", link);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

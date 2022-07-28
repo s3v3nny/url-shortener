@@ -1,11 +1,8 @@
 package ru.s3v3nny.urlshortener.repositories;
 
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
-import ru.s3v3nny.urlshortener.services.LinkRepoProvider;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 
 public class DatabaseRepo implements LinkRepoInterface {
@@ -30,6 +27,8 @@ public class DatabaseRepo implements LinkRepoInterface {
         statement.setTimestamp(3, timestamp);
 
         statement.executeUpdate();
+
+        connection.close();
     }
 
     @Override
@@ -41,8 +40,10 @@ public class DatabaseRepo implements LinkRepoInterface {
 
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();
+        connection.close();
 
         return resultSet.getString("link");
+
     }
 
     @Override
@@ -53,11 +54,27 @@ public class DatabaseRepo implements LinkRepoInterface {
         statement.setString(1, key);
 
         statement.executeUpdate();
+        connection.close();
     }
 
     @Override
-    public HashMap<String, String> getMap() {
-        return null;
+    public String getValues() throws SQLException {
+        Connection connection = getNewConnection();
+        String query = "SELECT * FROM links;";
+        Statement statement = connection.createStatement();
+
+        ResultSet resultSet = statement.executeQuery(query);
+
+        String result = "";
+        do {
+            resultSet.next();
+            result += resultSet.getString("id")
+                    + " equals " + resultSet.getString("link") + "\n";
+        } while (!(resultSet.isLast()));
+
+        connection.close();
+
+        return result;
     }
 
     @Override
@@ -69,7 +86,7 @@ public class DatabaseRepo implements LinkRepoInterface {
 
         ResultSet resultSet = statement.executeQuery();
 
-        return resultSet.isLast();
+        return resultSet.next();
     }
 
 

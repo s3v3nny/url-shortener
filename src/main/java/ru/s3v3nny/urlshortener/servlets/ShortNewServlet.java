@@ -21,8 +21,6 @@ public class ShortNewServlet extends HttpServlet {
 
     JsonConverter converter = new JsonConverter();
 
-    Logger log = Logger.getLogger(ShortNewServlet.class.getName());
-
     LinkUtils utils = new LinkUtils();
     LinkService service = new LinkService();
 
@@ -33,18 +31,11 @@ public class ShortNewServlet extends HttpServlet {
         BufferedReader reader = request.getReader();
 
         String shortID = null;
-        String logString;
 
         if (utils.checkContentType(contentType)) {
             String link = converter.getLink(reader.readLine()).getLink();
             if (utils.checkURL(link)) {
-                try {
-                    shortID = service.createNewShortUrl(link);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                logString = link + ": " + shortID;
-                log.info(logString);
+                shortID = service.shortLink(link);
             } else {
                 var err = new Error();
                 err.setMessage("Incorrect link");

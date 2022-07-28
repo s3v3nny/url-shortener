@@ -30,7 +30,7 @@ public class ShortNewServlet extends HttpServlet {
         String contentType = request.getContentType();
         BufferedReader reader = request.getReader();
 
-        String shortID = null;
+        String shortID;
 
         if (utils.checkContentType(contentType)) {
             String link = converter.getLink(reader.readLine()).getLink();

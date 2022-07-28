@@ -36,7 +36,7 @@ public class MapRepo implements LinkRepoInterface {
             result += entry.getKey() + " equals "+ entry.getValue() + "\n";
         }
 
-        return result.toString();
+        return result;
     }
 
     private HashMap<String, String> getMap() {

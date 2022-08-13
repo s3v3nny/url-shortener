@@ -1,6 +1,7 @@
 package ru.s3v3nny.urlshortener.repositories;
 
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
+import ru.s3v3nny.urlshortener.models.ShortenedLink;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -58,20 +59,18 @@ public class DatabaseRepo implements LinkRepoInterface {
     }
 
     @Override
-    public ArrayList<String> getValues() throws SQLException {
+    public ArrayList<ShortenedLink> getValues() throws SQLException {
         Connection connection = getNewConnection();
         String query = "SELECT * FROM links;";
         Statement statement = connection.createStatement();
 
         ResultSet resultSet = statement.executeQuery(query);
 
-        ArrayList<String> links = new ArrayList<>();
+        ArrayList<ShortenedLink> links = new ArrayList<>();
         do {
             resultSet.next();
-            String result = "";
-            result = resultSet.getString("id")
-                    + " equals " + resultSet.getString("link");
-            links.add(result);
+            ShortenedLink shortenedLink = new ShortenedLink(resultSet.getString("id"), resultSet.getString("link"));
+            links.add(shortenedLink);
         } while (!(resultSet.isLast()));
 
         connection.close();

@@ -3,6 +3,7 @@ package ru.s3v3nny.urlshortener.services;
 
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 import ru.s3v3nny.urlshortener.interfaces.RedisRepoInterface;
+import ru.s3v3nny.urlshortener.models.ShortenedLink;
 import ru.s3v3nny.urlshortener.servlets.AdminServlet;
 
 import java.sql.SQLException;
@@ -55,17 +56,15 @@ public class LinkService {
     }
 
     public String getLinks() throws SQLException {
-        ArrayList<String> links = linkRepo.getValues();
+        ArrayList<ShortenedLink> links = linkRepo.getValues();
 
         if(links == null) {
             return null;
         }
 
         String result = "";
-        for(String s : links) {
-            System.out.print(s);
-            String key = s.substring(0, 8);
-            result += s + " " + redisRepo.getViews(key) + "\n";
+        for(ShortenedLink s : links) {
+            result += "ID " + s.getKey() + " equals link " + s.getLink() + ". Redirects: " + redisRepo.getViews(s.getKey()) + "\n";
         }
 
         return result;

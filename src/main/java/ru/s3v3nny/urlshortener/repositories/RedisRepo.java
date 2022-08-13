@@ -2,54 +2,51 @@ package ru.s3v3nny.urlshortener.repositories;
 
 import redis.clients.jedis.Jedis;
 import ru.s3v3nny.urlshortener.interfaces.RedisRepoInterface;
+import ru.s3v3nny.urlshortener.services.JedisConnectionPool;
 
 public class RedisRepo implements RedisRepoInterface {
 
-    private Jedis getRedisConnection() {
-        return new Jedis("sloth-1.suslovd.ru", 9379);
-    }
-
     @Override
     public String getViews(String key) {
-        Jedis jedis = getRedisConnection();
+        Jedis jedis = JedisConnectionPool.getInstance().lease();
 
         String value = jedis.get(key);
-        jedis.close();
+        JedisConnectionPool.getInstance().release(jedis);
 
         return value;
     }
 
     @Override
     public void incrementValue(String key) {
-        Jedis jedis = getRedisConnection();
+        Jedis jedis = JedisConnectionPool.getInstance().lease();
 
         jedis.incr(key);
-        jedis.close();
+        JedisConnectionPool.getInstance().release(jedis);
     }
 
     @Override
     public boolean containsValue(String key) {
-        Jedis jedis = getRedisConnection();
+        Jedis jedis = JedisConnectionPool.getInstance().lease();
 
         boolean result = jedis.exists(key);
-        jedis.close();
+        JedisConnectionPool.getInstance().release(jedis);
 
         return result;
     }
 
     @Override
     public void addValue(String key) {
-        Jedis jedis = getRedisConnection();
+        Jedis jedis = JedisConnectionPool.getInstance().lease();
 
         jedis.set(key, "0");
-        jedis.close();
+        JedisConnectionPool.getInstance().release(jedis);
     }
 
     @Override
     public void deleteValue(String key) {
-        Jedis jedis = getRedisConnection();
+        Jedis jedis = JedisConnectionPool.getInstance().lease();
 
         jedis.del(key);
-        jedis.close();
+        JedisConnectionPool.getInstance().release(jedis);
     }
 }

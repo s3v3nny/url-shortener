@@ -1,5 +1,7 @@
 package ru.s3v3nny.urlshortener.interfaces;
 
+import ru.s3v3nny.urlshortener.models.ShortenedLink;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -10,7 +12,7 @@ public interface LinkRepoInterface {
 
     void deleteValue(String key) throws SQLException;
 
-    ArrayList<String> getValues() throws SQLException;
+    ArrayList<ShortenedLink> getValues() throws SQLException;
 
     boolean containsValue(String key) throws SQLException;
 

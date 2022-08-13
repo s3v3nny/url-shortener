@@ -55,12 +55,10 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String key = request.getPathInfo();
-
-        String result = null;
+        String result = "";
 
         try {
-            result = linkRepo.getValues();
+            result = service.getLinks();
         } catch (SQLException e) {
             e.printStackTrace();
         }

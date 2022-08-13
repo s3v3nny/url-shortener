@@ -1,14 +1,12 @@
 package ru.s3v3nny.urlshortener.services;
 
-import jakarta.servlet.http.HttpServletResponse;
+
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
-import ru.s3v3nny.urlshortener.models.Error;
+import ru.s3v3nny.urlshortener.interfaces.RedisRepoInterface;
 import ru.s3v3nny.urlshortener.servlets.AdminServlet;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -16,11 +14,13 @@ public class LinkService {
 
     LinkRepoInterface linkRepo = LinkRepoProvider.getLinkRepo();
     Logger log = Logger.getLogger(AdminServlet.class.getName());
+    RedisRepoInterface redisRepo = RedisRepoProvider.getRedisRepo();
 
     public String createNewShortUrl(String link) {
         String key = UUID.randomUUID().toString().split("-")[0];
         try {
             linkRepo.addNewValue(key, link);
+            redisRepo.addValue(key);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -28,7 +28,8 @@ public class LinkService {
     }
 
     public String getLink(String key) throws SQLException {
-        if (linkRepo.containsValue(key)) {
+        if (linkRepo.containsValue(key) && redisRepo.containsValue(key)) {
+            redisRepo.incrementValue(key);
             return linkRepo.getValue(key);
         } else {
             return null;
@@ -36,8 +37,9 @@ public class LinkService {
     }
 
     public boolean deleteLink(String key) throws SQLException {
-        if (linkRepo.containsValue(key)) {
+        if (linkRepo.containsValue(key) && redisRepo.containsValue(key)) {
             linkRepo.deleteValue(key);
+            redisRepo.deleteValue(key);
             log.info(key + " is deleted");
             return true;
         } else {
@@ -50,5 +52,22 @@ public class LinkService {
         String logString = link + ": " + shortID;
         log.info(logString);
         return shortID;
+    }
+
+    public String getLinks() throws SQLException {
+        ArrayList<String> links = linkRepo.getValues();
+
+        if(links == null) {
+            return null;
+        }
+
+        String result = "";
+        for(String s : links) {
+            System.out.print(s);
+            String key = s.substring(0, 8);
+            result += s + " " + redisRepo.getViews(key) + "\n";
+        }
+
+        return result;
     }
 }

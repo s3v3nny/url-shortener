@@ -1,6 +1,7 @@
 package ru.s3v3nny.urlshortener;
 
 import ru.s3v3nny.urlshortener.services.JsonConverter;
+import ru.s3v3nny.urlshortener.services.RedisMigration;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -17,6 +18,8 @@ public class Main {
 
         String jettyServerConfig;
         System.out.println(APP_CONFIG_PATH);
+
+        RedisMigration.setNullFields();
 
         if(APP_CONFIG_PATH == null) {
             ClassLoader classLoader = Main.class.getClassLoader();

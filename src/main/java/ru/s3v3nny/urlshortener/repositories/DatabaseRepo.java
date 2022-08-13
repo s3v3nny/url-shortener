@@ -3,7 +3,7 @@ package ru.s3v3nny.urlshortener.repositories;
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 
 import java.sql.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class DatabaseRepo implements LinkRepoInterface {
 
@@ -58,23 +58,25 @@ public class DatabaseRepo implements LinkRepoInterface {
     }
 
     @Override
-    public String getValues() throws SQLException {
+    public ArrayList<String> getValues() throws SQLException {
         Connection connection = getNewConnection();
         String query = "SELECT * FROM links;";
         Statement statement = connection.createStatement();
 
         ResultSet resultSet = statement.executeQuery(query);
 
-        String result = "";
+        ArrayList<String> links = new ArrayList<>();
         do {
             resultSet.next();
-            result += resultSet.getString("id")
-                    + " equals " + resultSet.getString("link") + "\n";
+            String result = "";
+            result = resultSet.getString("id")
+                    + " equals " + resultSet.getString("link");
+            links.add(result);
         } while (!(resultSet.isLast()));
 
         connection.close();
 
-        return result;
+        return links;
     }
 
     @Override

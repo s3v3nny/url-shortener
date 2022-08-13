@@ -2,6 +2,7 @@ package ru.s3v3nny.urlshortener.repositories;
 
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,14 +30,15 @@ public class MapRepo implements LinkRepoInterface {
     }
 
     @Override
-    public String getValues() {
-        String result = "";
+    public ArrayList<String> getValues() {
+        ArrayList<String> links = new ArrayList<>();
 
         for (Map.Entry<String, String> entry : getMap().entrySet()) {
-            result += entry.getKey() + " equals "+ entry.getValue() + "\n";
+            String result = entry.getKey() + " equals "+ entry.getValue();
+            links.add(result);
         }
 
-        return result;
+        return links;
     }
 
     private HashMap<String, String> getMap() {

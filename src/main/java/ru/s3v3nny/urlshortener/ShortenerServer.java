@@ -3,10 +3,10 @@ package ru.s3v3nny.urlshortener;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
-import ru.s3v3nny.urlshortener.servlets.AdminServlet;
-import ru.s3v3nny.urlshortener.servlets.GoServlet;
-import ru.s3v3nny.urlshortener.servlets.ShortNewServlet;
+import org.eclipse.jetty.servlet.ServletHolder;
+import ru.s3v3nny.urlshortener.servlets.*;
 
 
 public class ShortenerServer {
@@ -14,19 +14,21 @@ public class ShortenerServer {
     private Server server;
 
     public void start(int port) throws Exception {
-        server = new Server();
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
 
+        server = new Server();
+        server.setHandler(context);
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
         server.setConnectors(new Connector[]{connector});
 
-        ServletHandler servletHandler = new ServletHandler();
+        ServletHolder holder = context.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+        holder.setInitOrder(0);
 
-        servletHandler.addServletWithMapping(ShortNewServlet.class, "/short-new");
-        servletHandler.addServletWithMapping(GoServlet.class, "/go/*");
-        servletHandler.addServletWithMapping(AdminServlet.class, "/admin/*");
-
-        server.setHandler(servletHandler);
+        holder.setInitParameter("jersey.config.server.provider.classnames", Admin.class.getCanonicalName());
+        holder.setInitParameter("jersey.config.server.provider.classnames", Go.class.getCanonicalName());
+        holder.setInitParameter("jersey.config.server.provider.classnames", ShortNew.class.getCanonicalName());
 
         server.start();
     }

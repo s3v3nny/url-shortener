@@ -4,7 +4,7 @@ package ru.s3v3nny.urlshortener.services;
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 import ru.s3v3nny.urlshortener.interfaces.RedisRepoInterface;
 import ru.s3v3nny.urlshortener.models.ShortenedLink;
-import ru.s3v3nny.urlshortener.servlets.AdminServlet;
+import ru.s3v3nny.urlshortener.servlets.Admin;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class LinkService {
 
     LinkRepoInterface linkRepo = LinkRepoProvider.getLinkRepo();
-    Logger log = Logger.getLogger(AdminServlet.class.getName());
+    Logger log = Logger.getLogger(Admin.class.getName());
     RedisRepoInterface redisRepo = RedisRepoProvider.getRedisRepo();
 
     public String createNewShortUrl(String link) {

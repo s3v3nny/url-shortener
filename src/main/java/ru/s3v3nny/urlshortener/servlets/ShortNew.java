@@ -1,14 +1,16 @@
 package ru.s3v3nny.urlshortener.servlets;
 
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.models.Link;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
 import ru.s3v3nny.urlshortener.services.LinkService;
 import ru.s3v3nny.urlshortener.utils.LinkUtils;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("/")
 public class ShortNew {

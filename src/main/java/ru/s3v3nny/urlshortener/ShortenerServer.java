@@ -26,9 +26,8 @@ public class ShortenerServer {
         ServletHolder holder = context.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
         holder.setInitOrder(0);
 
-        holder.setInitParameter("jersey.config.server.provider.classnames", Admin.class.getCanonicalName());
-        holder.setInitParameter("jersey.config.server.provider.classnames", Go.class.getCanonicalName());
-        holder.setInitParameter("jersey.config.server.provider.classnames", ShortNew.class.getCanonicalName());
+        holder.setInitParameter("jersey.config.server.provider.packages",
+                "ru.s3v3nny.urlshortener.servlets");
 
         server.start();
     }

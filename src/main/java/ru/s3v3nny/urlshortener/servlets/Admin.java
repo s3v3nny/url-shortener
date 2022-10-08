@@ -1,13 +1,16 @@
 package ru.s3v3nny.urlshortener.servlets;
 
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Response;
 import lombok.SneakyThrows;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.services.JsonConverter;
 import ru.s3v3nny.urlshortener.services.LinkService;
 import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
 
@@ -20,7 +23,6 @@ public class Admin {
 
     @DELETE
     @Path("/{key}")
-    @Produces("application/json")
     @SneakyThrows
     public Response deleteLink(@PathParam("key") String key) {
 

@@ -3,8 +3,12 @@ package ru.s3v3nny.urlshortener.services;
 
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 import ru.s3v3nny.urlshortener.interfaces.RedisRepoInterface;
+import ru.s3v3nny.urlshortener.models.Error;
+import ru.s3v3nny.urlshortener.models.Link;
+import ru.s3v3nny.urlshortener.models.Result;
 import ru.s3v3nny.urlshortener.models.ShortenedLink;
 import ru.s3v3nny.urlshortener.servlets.Admin;
+import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,11 +17,22 @@ import java.util.logging.Logger;
 
 public class LinkService {
 
-    LinkRepoInterface linkRepo = LinkRepoProvider.getLinkRepo();
-    Logger log = Logger.getLogger(Admin.class.getName());
-    RedisRepoInterface redisRepo = RedisRepoProvider.getRedisRepo();
+    private final JsonConverter converter = new JsonConverter();
+    private final LinkUtils utils = new LinkUtils();
+    private final LinkRepoInterface linkRepo = LinkRepoProvider.getLinkRepo();
+    private final Logger log = Logger.getLogger(Admin.class.getName());
+    private final RedisRepoInterface redisRepo = RedisRepoProvider.getRedisRepo();
 
-    public String createNewShortUrl(String link) {
+    public Result<Link, Error> createNewShortUrl(String input) {
+
+        String link = converter.getLink(input).getLink();
+        if (!utils.checkURL(link)) {
+            var error = new Error();
+            error.setMessage("Incorrect link!");
+
+            return new Result<>(null, error);
+        }
+
         String key = UUID.randomUUID().toString().split("-")[0];
         try {
             linkRepo.addNewValue(key, link);
@@ -25,48 +40,68 @@ public class LinkService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return key;
+
+        String logString = link + ": " + key;
+        log.info(logString);
+
+        Link linkObj = new Link();
+        linkObj.setLink("http://localhost:8080/go/" + key);
+        return new Result<>(linkObj, null);
     }
 
-    public String getLink(String key) throws SQLException {
+    public Result<Link, Error> getLink(String key) throws SQLException {
+        if (!utils.checkKey(key)) {
+            var err = new Error();
+            err.setMessage("Incorrect key!");
+            return new Result<>(null, err);
+        }
+
         if (linkRepo.containsValue(key) && redisRepo.containsValue(key)) {
             redisRepo.incrementValue(key);
-            return linkRepo.getValue(key);
+            Link link = new Link();
+            link.setLink(linkRepo.getValue(key));
+            return new Result<>(link, null);
         } else {
-            return null;
+            var err = new Error();
+            err.setMessage("Link doesn't exist in repository!");
+            return new Result<>(null, err);
         }
     }
 
-    public boolean deleteLink(String key) throws SQLException {
+    public Result<Link, Error> deleteLink(String key) throws SQLException {
+        if (!utils.checkKey(key)) {
+            var err = new Error();
+            err.setMessage("Incorrect key");
+            return new Result<>(null, err);
+        }
+
         if (linkRepo.containsValue(key) && redisRepo.containsValue(key)) {
             linkRepo.deleteValue(key);
             redisRepo.deleteValue(key);
             log.info(key + " is deleted");
-            return true;
+            return new Result<>(null, null);
         } else {
-            return false;
+            var err = new Error();
+            err.setMessage("Link doesn't exist in repository!");
+            return new Result<>(null, err);
         }
     }
 
-    public String shortLink(String link) {
-        String shortID = createNewShortUrl(link);
-        String logString = link + ": " + shortID;
-        log.info(logString);
-        return shortID;
-    }
+    public Result<String, Error> getLinks() throws SQLException {
 
-    public String getLinks() throws SQLException {
         ArrayList<ShortenedLink> links = linkRepo.getValues();
 
-        if(links == null) {
-            return null;
+        if (links == null) {
+            var err = new Error();
+            err.setMessage("Repository is null!");
+            return new Result<>(null, err);
         }
 
         String result = "";
-        for(ShortenedLink s : links) {
+        for (ShortenedLink s : links) {
             result += "ID " + s.getKey() + " equals link " + s.getLink() + ". Redirects: " + redisRepo.getViews(s.getKey()) + "\n";
         }
 
-        return result;
+        return new Result<>(result, null);
     }
 }

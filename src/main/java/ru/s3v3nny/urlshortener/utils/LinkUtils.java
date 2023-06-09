@@ -1,7 +1,5 @@
 package ru.s3v3nny.urlshortener.utils;
 
-import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
-import ru.s3v3nny.urlshortener.services.LinkRepoProvider;
 import ru.s3v3nny.urlshortener.services.URLCheck;
 
 public class LinkUtils {

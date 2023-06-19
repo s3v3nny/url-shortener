@@ -3,15 +3,14 @@ package ru.s3v3nny.urlshortener.services;
 
 import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
 import ru.s3v3nny.urlshortener.interfaces.RedisRepoInterface;
+import ru.s3v3nny.urlshortener.models.*;
 import ru.s3v3nny.urlshortener.models.Error;
-import ru.s3v3nny.urlshortener.models.Link;
-import ru.s3v3nny.urlshortener.models.Result;
-import ru.s3v3nny.urlshortener.models.ShortenedLink;
 import ru.s3v3nny.urlshortener.servlets.Admin;
 import ru.s3v3nny.urlshortener.utils.LinkUtils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -68,7 +67,7 @@ public class LinkService {
         }
     }
 
-    public Result<Link, Error> deleteLink(String key) throws SQLException {
+    public Result<Message, Error> deleteLink(String key) throws SQLException {
         if (!utils.checkKey(key)) {
             var err = new Error();
             err.setMessage("Incorrect key");
@@ -79,7 +78,9 @@ public class LinkService {
             linkRepo.deleteValue(key);
             redisRepo.deleteValue(key);
             log.info(key + " is deleted");
-            return new Result<>(null, null);
+            Message message = new Message();
+            message.setMessage("Successfully deleted!");
+            return new Result<>(message, null);
         } else {
             var err = new Error();
             err.setMessage("Link doesn't exist in repository!");
@@ -87,7 +88,7 @@ public class LinkService {
         }
     }
 
-    public Result<String, Error> getLinks() throws SQLException {
+    public Result<List, Error> getLinks() throws SQLException {
 
         ArrayList<ShortenedLink> links = linkRepo.getValues();
 
@@ -97,11 +98,12 @@ public class LinkService {
             return new Result<>(null, err);
         }
 
-        String result = "";
-        for (ShortenedLink s : links) {
-            result += "ID " + s.getKey() + " equals link " + s.getLink() + ". Redirects: " + redisRepo.getViews(s.getKey()) + "\n";
+        for (ShortenedLink link : links) {
+            String key = link.getKey();
+            Integer views = Integer.parseInt(redisRepo.getViews(key));
+            link.setViews(views);
         }
 
-        return new Result<>(result, null);
+        return new Result<>(links, null);
     }
 }

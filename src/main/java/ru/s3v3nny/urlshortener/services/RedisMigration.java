@@ -14,6 +14,10 @@ public class RedisMigration {
     public static void setNullFields() throws SQLException {
         ArrayList<ShortenedLink> links = linkRepo.getValues();
 
+        if (links == null) {
+            return;
+        }
+
         for(ShortenedLink s : links) {
             if(!(redisRepo.containsValue(s.getKey()))) {
                 redisRepo.addValue(s.getKey());

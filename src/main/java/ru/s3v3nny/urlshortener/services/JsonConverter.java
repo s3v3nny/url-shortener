@@ -1,6 +1,5 @@
 package ru.s3v3nny.urlshortener.services;
 
-import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.configs.JettyServerInfo;
 import ru.s3v3nny.urlshortener.models.Link;
 
@@ -15,13 +14,5 @@ public class JsonConverter {
 
     public JettyServerInfo getJettyServerInfo(String json) {
         return gson.fromJson(json, JettyServerInfo.class);
-    }
-
-    public String errorToJson(Error err) {
-        return gson.toJson(err);
-    }
-
-    public String linkToJson(Link link) {
-        return gson.toJson(link);
     }
 }

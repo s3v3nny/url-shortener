@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ShortenedLink {
     private String key;
     private String link;
+    private Integer views;
 }

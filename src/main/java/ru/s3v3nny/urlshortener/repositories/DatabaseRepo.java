@@ -66,12 +66,17 @@ public class DatabaseRepo implements LinkRepoInterface {
 
         ResultSet resultSet = statement.executeQuery(query);
 
+        if (!resultSet.next()) {
+            return null;
+        }
+
         ArrayList<ShortenedLink> links = new ArrayList<>();
         do {
-            resultSet.next();
-            ShortenedLink shortenedLink = new ShortenedLink(resultSet.getString("id"), resultSet.getString("link"));
+            ShortenedLink shortenedLink = new ShortenedLink();
+            shortenedLink.setKey(resultSet.getString("id"));
+            shortenedLink.setLink(resultSet.getString("link"));
             links.add(shortenedLink);
-        } while (!(resultSet.isLast()));
+        } while (resultSet.next());
 
         connection.close();
 

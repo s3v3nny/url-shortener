@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MapRepo implements LinkRepoInterface {
 
-    private HashMap<String, String> map = new HashMap<>();
+    private HashMap<String, String> map;
 
     @Override
     public void addNewValue(String key, String value) {
@@ -35,7 +35,9 @@ public class MapRepo implements LinkRepoInterface {
         ArrayList<ShortenedLink> links = new ArrayList<>();
 
         for (Map.Entry<String, String> entry : getMap().entrySet()) {
-            ShortenedLink shortenedLink = new ShortenedLink(entry.getKey(), entry.getValue());
+            ShortenedLink shortenedLink = new ShortenedLink();
+            shortenedLink.setKey(entry.getKey());
+            shortenedLink.setLink(entry.getValue());
             links.add(shortenedLink);
         }
 

@@ -9,12 +9,10 @@ import jakarta.ws.rs.core.Response;
 import ru.s3v3nny.urlshortener.models.Error;
 import ru.s3v3nny.urlshortener.models.Link;
 import ru.s3v3nny.urlshortener.models.Result;
-import ru.s3v3nny.urlshortener.services.JsonConverter;
 import ru.s3v3nny.urlshortener.services.LinkService;
 
 @Path("/")
 public class ShortNew {
-    JsonConverter converter = new JsonConverter();
     LinkService service = new LinkService();
 
     @POST
@@ -28,13 +26,13 @@ public class ShortNew {
         if (result.getValue() == null) {
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity(converter.errorToJson(result.getError()))
+                    .entity(result.getError())
                     .build();
         }
 
         return Response
                 .status(Response.Status.OK)
-                .entity(converter.linkToJson(result.getValue()))
+                .entity(result.getValue())
                 .build();
     }
 }

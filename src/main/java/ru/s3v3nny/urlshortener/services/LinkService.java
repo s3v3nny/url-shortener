@@ -1,75 +1,84 @@
 package ru.s3v3nny.urlshortener.services;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import ru.s3v3nny.urlshortener.dto.*;
+import ru.s3v3nny.urlshortener.entities.Link;
+import ru.s3v3nny.urlshortener.repositories.LinkRepository;
+import ru.s3v3nny.urlshortener.util.EntityConverter;
+import ru.s3v3nny.urlshortener.util.LinkUtil;
+import ru.s3v3nny.urlshortener.util.URLUtil;
 
-import ru.s3v3nny.urlshortener.interfaces.LinkRepoInterface;
-import ru.s3v3nny.urlshortener.interfaces.RedisRepoInterface;
-import ru.s3v3nny.urlshortener.models.LinkModel;
-import ru.s3v3nny.urlshortener.models.ShortenedLink;
-import ru.s3v3nny.urlshortener.servlets.AdminServlet;
-
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.UUID;
-import java.util.logging.Logger;
+import java.util.List;
 
+@Service
+@AllArgsConstructor
+@Slf4j
 public class LinkService {
 
-    LinkRepoInterface linkRepo = LinkRepoProvider.getLinkRepo();
-    Logger log = Logger.getLogger(AdminServlet.class.getName());
-    RedisRepoInterface redisRepo = RedisRepoProvider.getRedisRepo();
-    LinkDAO linkDAO = new LinkDAO();
+    private LinkUtil linkUtil;
+    private LinkRepository repository;
+    private URLUtil urlUtil;
+    private EntityConverter converter;
 
-    public String createNewShortUrl(String link) {
-        String key = UUID.randomUUID().toString().split("-")[0];
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        LinkModel linkModel = new LinkModel(key, link, timestamp);
-        linkDAO.update(linkModel);
-            //linkRepo.addNewValue(key, link);
-        redisRepo.addValue(key);
+    public ResponseDTO<ShortenedLinkDTO, ErrorDTO> create(LinkDTO linkDTO) {
+        String url = linkDTO.getUrl();
 
-        return key;
-    }
-
-    public String getLink(String key) throws SQLException {
-        if (linkRepo.containsValue(key) && redisRepo.containsValue(key)) {
-            redisRepo.incrementValue(key);
-            return linkRepo.getValue(key);
-        } else {
-            return null;
-        }
-    }
-
-    public boolean deleteLink(String key) throws SQLException {
-        if (linkRepo.containsValue(key) && redisRepo.containsValue(key)) {
-            linkRepo.deleteValue(key);
-            redisRepo.deleteValue(key);
-            log.info(key + " is deleted");
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public String shortLink(String link) {
-        String shortID = createNewShortUrl(link);
-        String logString = link + ": " + shortID;
-        log.info(logString);
-        return shortID;
-    }
-
-    public String getLinks() throws SQLException {
-        ArrayList<ShortenedLink> links = linkRepo.getValues();
-
-        if(links == null) {
-            return null;
+        if(!urlUtil.validateURL(url)) {
+            var err = new ErrorDTO();
+            err.setMessage("Invalid URL");
+            err.setCode(400);
+            return new ResponseDTO<>(null, err);
         }
 
-        String result = "";
-        for(ShortenedLink s : links) {
-            result += "ID " + s.getKey() + " equals link " + s.getLink() + ". Redirects: " + redisRepo.getViews(s.getKey()) + "\n";
+        Link link = repository.findByUrl(url);
+
+        if(link != null) {
+            return new ResponseDTO<>(converter.entityToShortenedLinkDto(link), null);
         }
 
-        return result;
+        String key = linkUtil.generateKey();
+        while(repository.findByKey(key) != null) {
+            key = linkUtil.generateKey();
+        }
+        link = new Link();
+        link.setKey(key);
+        link.setUrl(url);
+        link.setCreatedAt(Instant.now());
+        link.setViews(0L);
+        repository.save(link);
+        return new ResponseDTO<>(converter.entityToShortenedLinkDto(link), null);
+    }
+
+    public ResponseDTO<List<ShortenedLinkDTO>, ErrorDTO> getLinks() {
+        List<Link> links = repository.findAll();
+        if (links.isEmpty()) {
+            var err = new ErrorDTO();
+            err.setMessage("No links found");
+            err.setCode(400);
+        }
+        List<ShortenedLinkDTO> shortenedLinks = new ArrayList<>();
+        for (var link : links) {
+            ShortenedLinkDTO shortenedLink = converter.entityToShortenedLinkDto(link);
+            shortenedLinks.add(shortenedLink);
+        }
+        return new ResponseDTO<>(shortenedLinks, null);
+    }
+
+    public ResponseDTO<MessageDTO, ErrorDTO> delete (String key) {
+        Link link = repository.findByKey(key);
+        if(link == null) {
+            var err = new ErrorDTO();
+            err.setMessage("Link not found");
+            err.setCode(400);
+            return new ResponseDTO<>(null, err);
+        }
+        repository.delete(link);
+        var msg = new MessageDTO();
+        msg.setMessage("Link deleted");
+        return new ResponseDTO<>(msg, null);
     }
 }

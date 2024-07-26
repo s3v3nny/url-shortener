@@ -27,7 +27,7 @@ public class RedirectService {
         if (link == null) {
             var err = new ErrorDTO();
             err.setMessage("Link not found");
-            err.setCode(400);
+            err.setCode(404);
             return new ResponseDTO<>(null, err);
         }
         link.setViews(link.getViews() + 1);

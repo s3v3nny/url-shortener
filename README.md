@@ -2,7 +2,7 @@
 Simple URL shortener on Java
 ## Structure
 #### API
-* GET /api/v1/links - Get All Links
+* GET /api/v1/links - Get All Links  
   Successful response example:
 ```json
 [
@@ -14,7 +14,7 @@ Simple URL shortener on Java
   }
 ]
 ```
-* POST /api/v1/links - Short new URL
+* POST /api/v1/links - Short new URL  
   Expected body:
 ```json
 {
@@ -30,7 +30,7 @@ Successful response example:
     "views": 999
 }
 ```
-* DELETE /api/v1/links/{key} - Delete link by key
+* DELETE /api/v1/links/{key} - Delete link by key  
   Successful response example:
 ```json
 {

@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: url-shortener
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+app-settings:
+  base-url: http://localhost/
